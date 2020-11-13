@@ -41,9 +41,9 @@ public class ArrayTaskList {
 
     public ArrayTaskList incoming(int from, int to) {
         ArrayTaskList arrayInTime = new ArrayTaskList();
-        for (int i = 0; i < countOfTasks; i++) {
-            if (getTask(i).nextTimeAfter(from) >= from && getTask(i).nextTimeAfter(from) <= to) {
-                arrayInTime.add(arrayTaskList[i]);
+        for (int k = 0; k < countOfTasks; k++) {
+            if (getTask(k).nextTimeAfter(from) >= from && getTask(k).nextTimeAfter(from) <= to) {
+                arrayInTime.add(arrayTaskList[k]);
             }
         }
         return arrayInTime;
