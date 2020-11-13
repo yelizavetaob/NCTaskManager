@@ -42,7 +42,7 @@ public class Task {
         this.active = active;
     }
     /**@return time if the task is non-repeated
-     * or return start if the task is repeated*/
+     * or @return start if the task is repeated*/
     public int getTime() {
         return interval != 0 ? start : time;
     }
