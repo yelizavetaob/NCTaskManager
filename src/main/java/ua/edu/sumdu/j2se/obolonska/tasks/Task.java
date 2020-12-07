@@ -1,8 +1,7 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
-
 import java.util.Objects;
 
-public class Task {
+public class Task implements Cloneable {
     /**Title is the title of a task*/
     private String title;
     /**Time is the time of a task that is executed 1 time (Fom 01.02.2000)*
@@ -14,12 +13,24 @@ public class Task {
     /**Define an active or a non-active task*/
     private boolean active;
     /**Constructor for creating a task that does not repeat */
-    public Task(final String title, final int time) {
+    public Task (final String title, final int time) {
+        if (time < 0) {
+            throw new IllegalArgumentException("Time cannot be less than 0");
+        }
         this.title = title;
         this.time = time;
     }
     /**Constructor for creating a task that repeats */
-    public Task(final String title, final int start, final int end, final int interval) {
+    public Task (final String title, final int start, final int end, final int interval)  {
+        if (start < 0) {
+            throw new IllegalArgumentException("Start cannot be less than 0");
+        } else if (end < 0) {
+            throw new IllegalArgumentException("End cannot be less than 0");
+        } else if (interval <= 0) {
+            throw new IllegalArgumentException("interval cannot be less than or equal to zero");
+        } else if (start > end) {
+            throw new IllegalArgumentException("Start cannot be is greater than end");
+        }
         this.title = title;
         this.start = start;
         this.end = end;
@@ -42,13 +53,16 @@ public class Task {
         this.active = active;
     }
     /**@return time if the task is non-repeated
-     * or @return start if the task is repeated*/
+     * or return start if the task is repeated*/
     public int getTime() {
         return interval != 0 ? start : time;
     }
     /**@param time execution of non-repeated task to set,
      * if task is repeated then task is transforming to non-repeated*/
     public void setTime(final int time) {
+        if (time < 0) {
+            throw new IllegalArgumentException("Time cannot be less than 0");
+        }
         this.time = time;
         this.start = 0;
         this.end = 0;
@@ -74,6 +88,15 @@ public class Task {
      * @param interval is the period of running a repeating task to set
      * if the task is not repeated, then the task goes to the repeated one*/
     public void setTime(final int start, final int end, final int interval) {
+        if (start < 0) {
+            throw new IllegalArgumentException("Start cannot be less than 0");
+        } else if (end < 0) {
+            throw new IllegalArgumentException("End cannot be less than 0");
+        } else if (interval <= 0) {
+            throw new IllegalArgumentException("interval cannot be less than or equal to zero");
+        } else if (start > end) {
+            throw new IllegalArgumentException("Start cannot be is greater than end");
+        }
         this.start = start;
         this.end = end;
         this.interval = interval;
@@ -118,6 +141,11 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(getTitle(), getTime(), start, end, interval, isActive());
+    }
+
+    @Override
+    public Task clone() throws CloneNotSupportedException {
+        return (Task) super.clone();
     }
 }
 

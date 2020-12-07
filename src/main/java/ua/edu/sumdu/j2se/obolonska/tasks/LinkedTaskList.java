@@ -1,21 +1,28 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
 
-public class LinkedTaskList {
+public class LinkedTaskList extends AbstractTaskList implements Cloneable{
     private Node first;
     private Node tail;
     private int countOfTasks;
 
-    private class Node {
+    private class Node implements Cloneable {
         Node next;
         Task task;
         Node(Task task, Node next) {
             this.task = task;
             this.next = next;
         }
+
+        @Override
+        public Node clone() throws CloneNotSupportedException{
+            Node node = (Node) super.clone();
+            task = task.clone();
+            return node;
+        }
     }
 
     public void add(Task task){
-        Node linkedTasksList = new Node(task, null);
+        Node linkedTasksList = new Node (task, null);
         if(first == null){
             first = linkedTasksList;
             tail = first;
@@ -73,5 +80,27 @@ public class LinkedTaskList {
             }
         }
         return listOfTasks;
+    }
+
+    @Override
+    public String toString() {
+        return "LinkedTaskList{" +
+                "first=" + first +
+                ", tail=" + tail +
+                ", countOfTasks=" + countOfTasks +
+                '}';
+    }
+
+    @Override
+    public LinkedTaskList clone() throws CloneNotSupportedException{
+        LinkedTaskList list = (LinkedTaskList) super.clone();
+        if (countOfTasks == 0) return list;
+        first = first.clone();
+        Node node = first;
+        while (node.next != null){
+            node.next = node.next.clone();
+            node = node.next;
+        }
+        return list;
     }
 }
