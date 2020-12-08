@@ -1,8 +1,7 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
 import java.util.Arrays;
-import java.util.Objects;
 
-public class ArrayTaskList extends AbstractTaskList implements Cloneable{
+public class ArrayTaskList {
     private int countOfTasks = 0;
     private Task[] arrayTaskList = new Task[10];
 
@@ -42,42 +41,11 @@ public class ArrayTaskList extends AbstractTaskList implements Cloneable{
 
     public ArrayTaskList incoming(int from, int to) {
         ArrayTaskList arrayInTime = new ArrayTaskList();
-        for (int i = 0; i < countOfTasks; i++) {
-            if (getTask(i).nextTimeAfter(from) >= from && getTask(i).nextTimeAfter(from) <= to) {
-                arrayInTime.add(arrayTaskList[i]);
+        for (int k = 0; k < countOfTasks; k++) {
+            if (getTask(k).nextTimeAfter(from) >= from && getTask(k).nextTimeAfter(from) <= to) {
+                arrayInTime.add(arrayTaskList[k]);
             }
         }
         return arrayInTime;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ArrayTaskList)) return false;
-        ArrayTaskList that = (ArrayTaskList) o;
-        return countOfTasks == that.countOfTasks &&
-                Arrays.equals(arrayTaskList, that.arrayTaskList);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(countOfTasks);
-        result = 31 * result + Arrays.hashCode(arrayTaskList);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ArrayTaskList{" +
-                "countOfTasks=" + countOfTasks +
-                ", arrayTaskList=" + Arrays.toString(arrayTaskList) +
-                '}';
-    }
-
-    @Override
-    public ArrayTaskList clone() throws CloneNotSupportedException{
-        ArrayTaskList copyArray = (ArrayTaskList) super.clone();
-        arrayTaskList = arrayTaskList.clone();
-        return copyArray;
     }
 }
