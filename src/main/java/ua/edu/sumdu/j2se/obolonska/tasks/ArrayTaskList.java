@@ -1,5 +1,7 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Objects;
 
 public class ArrayTaskList {
     private int countOfTasks = 0;
@@ -47,5 +49,67 @@ public class ArrayTaskList {
             }
         }
         return arrayInTime;
+    }
+    
+     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArrayTaskList)) return false;
+        ArrayTaskList that = (ArrayTaskList) o;
+        return countOfTasks == that.countOfTasks &&
+                Arrays.equals(arrayTaskList, that.arrayTaskList);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(countOfTasks);
+        result = 31 * result + Arrays.hashCode(arrayTaskList);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ArrayTaskList{" +
+                "countOfTasks=" + countOfTasks +
+                ", arrayTaskList=" + Arrays.toString(arrayTaskList) +
+                '}';
+    }
+
+    @Override
+    public ArrayTaskList clone() throws CloneNotSupportedException {
+        ArrayTaskList copyArray = (ArrayTaskList) super.clone();
+        arrayTaskList = arrayTaskList.clone();
+        return copyArray;
+    }
+
+    @Override
+    public Iterator<Task> iterator() {
+        return new ArrayTaskListIterator();
+    }
+
+    private class ArrayTaskListIterator implements Iterator<Task>{
+        private int next = 0;
+        private boolean isNext;
+
+        @Override
+        public boolean hasNext() {
+            return next < countOfTasks;
+        }
+
+        @Override
+        public Task next() {
+            Task nextTask = arrayTaskList[next++];
+            isNext = true;
+            return nextTask;
+        }
+
+        @Override
+        public void remove(){
+            if (!isNext) {
+                throw new IllegalStateException("Next element needs to be defined");
+            } else {
+                ArrayTaskList.this.remove(getTask(--next));
+            }
+        }
     }
 }
