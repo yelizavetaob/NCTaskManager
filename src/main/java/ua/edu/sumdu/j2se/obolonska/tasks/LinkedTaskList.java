@@ -1,6 +1,11 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
 
-public class LinkedTaskList {
+import org.jetbrains.annotations.NotNull;
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+public class LinkedTaskList extends AbstractTaskList implements Cloneable{
     private Node first;
     private Node tail;
     private int countOfTasks;
@@ -73,5 +78,81 @@ public class LinkedTaskList {
             }
         }
         return listOfTasks;
+    }
+    
+        @Override
+    public String toString() {
+        return "LinkedTaskList{" +
+                "first=" + first +
+                ", tail=" + tail +
+                ", countOfTasks=" + countOfTasks +
+                '}';
+    }
+
+    @Override
+    public LinkedTaskList clone() throws CloneNotSupportedException {
+        LinkedTaskList list = (LinkedTaskList) super.clone();
+        if (countOfTasks == 0) return list;
+        first = first.clone();
+        Node node = first;
+        while (node.next != null) {
+            node.next = node.next.clone();
+            node = node.next;
+        }
+        return list;
+    }
+
+    @NotNull
+    @Override
+    public TaskListIterator iterator() {
+        return new TaskListIterator();
+    }
+
+    private class TaskListIterator implements Iterator<Task> {
+        private Node pointer;
+        private Node next = first;
+        private boolean isDelete;
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public Task next() {
+            if (!hasNext())
+                throw new NoSuchElementException("The iteration has no more elements");
+            Task task = next.task;
+            pointer = next;
+            next = next.next;
+            isDelete = true;
+            return task;
+        }
+
+        @Override
+        public void remove() {
+            if (isDelete) {
+                LinkedTaskList.this.remove(pointer.task);
+            } else {
+                throw new IllegalStateException("Next element needs to be defined");
+            }
+        }
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LinkedTaskList tasks = (LinkedTaskList) o;
+        if(countOfTasks == tasks.countOfTasks && size() == tasks.size());
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(countOfTasks);
+        result = 31 ^ result;
+        return result;
     }
 }
