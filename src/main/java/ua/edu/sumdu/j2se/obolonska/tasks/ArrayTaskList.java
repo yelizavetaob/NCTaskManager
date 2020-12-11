@@ -1,9 +1,11 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-public class ArrayTaskList {
+public class ArrayTaskList extends AbstractTaskList implements Cloneable {
     private int countOfTasks = 0;
     private Task[] arrayTaskList = new Task[10];
 
@@ -11,47 +13,47 @@ public class ArrayTaskList {
         arrayTaskList[countOfTasks] = task;
         countOfTasks++;
         if (countOfTasks == arrayTaskList.length) {
-            arrayTaskList = Arrays.copyOf(arrayTaskList, arrayTaskList.length*2);
+            arrayTaskList = Arrays.copyOf(arrayTaskList, arrayTaskList.length * 2);
         }
     }
 
     public boolean remove(Task task) {
         boolean stateOfRemove = false;
         int loc;
-        for(int i=0; i<countOfTasks; i++){
-            if(task.equals(arrayTaskList[i])){
+        for (int i = 0; i < countOfTasks; i++) {
+            if (task.equals(arrayTaskList[i])) {
                 arrayTaskList[i] = null;
                 countOfTasks--;
                 loc = i;
-                    for (int k = loc; k < countOfTasks; k++){
-                        arrayTaskList[k] = arrayTaskList[k + 1];
-                    }
+                for (int k = loc; k < countOfTasks; k++) {
+                    arrayTaskList[k] = arrayTaskList[k + 1];
+                }
                 stateOfRemove = true;
             }
         }
         return stateOfRemove;
     }
 
-    public int size(){
+    public int size() {
         int size = countOfTasks;
         return countOfTasks;
     }
 
-    public Task getTask(int index){
+    public Task getTask(int index) {
         return arrayTaskList[index];
     }
 
-    public ArrayTaskList incoming(int from, int to) {
-        ArrayTaskList arrayInTime = new ArrayTaskList();
-        for (int k = 0; k < countOfTasks; k++) {
-            if (getTask(k).nextTimeAfter(from) >= from && getTask(k).nextTimeAfter(from) <= to) {
-                arrayInTime.add(arrayTaskList[k]);
-            }
-        }
-        return arrayInTime;
+    @Override
+    public ListTypes.types getType() {
+        return ListTypes.types.ARRAY;
     }
-    
-     @Override
+
+    @Override
+    public Stream<Task> getStream() {
+        return Arrays.stream(arrayTaskList, 0, countOfTasks);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ArrayTaskList)) return false;
@@ -113,3 +115,4 @@ public class ArrayTaskList {
         }
     }
 }
+

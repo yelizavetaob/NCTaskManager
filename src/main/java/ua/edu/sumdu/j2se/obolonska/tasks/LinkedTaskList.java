@@ -1,43 +1,52 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class LinkedTaskList extends AbstractTaskList implements Cloneable{
+public class LinkedTaskList extends AbstractTaskList implements Cloneable {
     private Node first;
     private Node tail;
     private int countOfTasks;
 
-    private class Node {
+    private class Node implements Cloneable {
         Node next;
         Task task;
+
         Node(Task task, Node next) {
             this.task = task;
             this.next = next;
         }
+
+        @Override
+        public Node clone() throws CloneNotSupportedException {
+            Node node = (Node) super.clone();
+            task = task.clone();
+            return node;
+        }
     }
 
-    public void add(Task task){
+    public void add(Task task) {
         Node linkedTasksList = new Node(task, null);
-        if(first == null){
+        if (first == null) {
             first = linkedTasksList;
             tail = first;
-        }else{
+        } else {
             tail.next = linkedTasksList;
             tail = tail.next;
         }
         countOfTasks++;
     }
 
-    public boolean remove(Task task){
+    public boolean remove(Task task) {
         Node prev = null;
-        if(task == null){
+        if (task == null) {
             return false;
         }
         Node position = first;
-        for(; position != null; position = position.next) {
+        for (; position != null; position = position.next) {
             if (task.equals(position.task)) {
                 if (position == first) {
                     first = position.next;
@@ -55,11 +64,11 @@ public class LinkedTaskList extends AbstractTaskList implements Cloneable{
         return false;
     }
 
-    public int size(){
+    public int size() {
         return countOfTasks;
     }
 
-    public Task getTask(int index){
+    public Task getTask(int index) {
         if (index < 0 || index >= countOfTasks) {
             throw new IndexOutOfBoundsException("Index " + index + " out of bounds for length " + countOfTasks);
         }
@@ -70,17 +79,17 @@ public class LinkedTaskList extends AbstractTaskList implements Cloneable{
         return returnTask.task;
     }
 
-    public LinkedTaskList incoming(int from, int to){
-        LinkedTaskList listOfTasks  = new LinkedTaskList();
-        for (Node position = first; position != null; position = position.next) {
-            if (position.task.nextTimeAfter(from) > from && position.task.nextTimeAfter(from) <= to) {
-                listOfTasks.add(position.task);
-            }
-        }
-        return listOfTasks;
+    @Override
+    public ListTypes.types getType() {
+        return ListTypes.types.LINKED;
     }
-    
-        @Override
+
+    @Override
+    public Stream<Task> getStream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
+
+    @Override
     public String toString() {
         return "LinkedTaskList{" +
                 "first=" + first +
