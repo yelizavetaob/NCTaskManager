@@ -12,6 +12,10 @@ public abstract class AbstractTaskList implements Iterable<Task>{
 
     public abstract Task getTask(int index);
     
+    public abstract ListTypes.types getType();
+
+    public abstract Stream<Task> getStream();
+    
     final public AbstractTaskList incoming(int from, int to) throws CloneNotSupportedException {
            AbstractTaskList taskList = TaskListFactory.createTaskList(this.getType());
            getStream().forEach(task -> {
