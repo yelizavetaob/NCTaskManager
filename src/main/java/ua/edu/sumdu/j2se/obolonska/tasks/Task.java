@@ -1,8 +1,10 @@
 package ua.edu.sumdu.j2se.obolonska.tasks;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 
-public class Task {
+public class Task implements Cloneable{
     /**Title is the title of a task*/
     private String title;
     /**Time is the time of a task that is executed 1 time (Fom 01.02.2000)*
@@ -10,16 +12,30 @@ public class Task {
      * End is the end of a repetitive task
      * Interval is the duration of one task
      */
-    private int time, start, end, interval;
+    private LocalDateTime time, start, end;
+    private int interval;
     /**Define an active or a non-active task*/
     private boolean active;
     /**Constructor for creating a task that does not repeat */
-    public Task(final String title, final int time) {
+    public Task(final String title, final LocalDateTime time) {
+        if (time == null) {
+            throw new IllegalArgumentException("argument 'time' is below 0");
+        }
         this.title = title;
         this.time = time;
     }
     /**Constructor for creating a task that repeats */
-    public Task(final String title, final int start, final int end, final int interval) {
+    public Task(final String title, final LocalDateTime start, final LocalDateTime end, final int interval) {
+        if (start == null) {
+            throw new IllegalArgumentException("start is less than zero");
+        } else if (end == null) {
+            throw new IllegalArgumentException("end is less than zero");
+        } else if (interval <= 0){
+            throw new IllegalArgumentException("interval is less than or equal to zero");
+        } else if(start.isAfter(end)){
+            throw new IllegalArgumentException("start is greater than end");
+        }
+
         this.title = title;
         this.start = start;
         this.end = end;
@@ -43,29 +59,32 @@ public class Task {
     }
     /**@return time if the task is non-repeated
      * or @return start if the task is repeated*/
-    public int getTime() {
+    public LocalDateTime getTime() {
         return interval != 0 ? start : time;
     }
     /**@param time execution of non-repeated task to set,
      * if task is repeated then task is transforming to non-repeated*/
-    public void setTime(final int time) {
+    public void setTime(final LocalDateTime time) {
+        if (time == null) {
+            throw new IllegalArgumentException("argument 'time' is less than 0");
+        }
         this.time = time;
-        this.start = 0;
-        this.end = 0;
+        this.start = null;
+        this.end = null;
         this.interval = 0;
     }
     /**@return start time of interval of repeated task,
      *if task is non-repeated then returning execution time*/
-    public int getStartTime() {
-        return start != 0 ? start : time;
+    public LocalDateTime getStartTime() {
+        return start != null ? start : time;
     }
     /**@return end time of interval of repeated task,
      *if task is non-repeated then returning execution time */
-    public int getEndTime() {
-        return end != 0 ? end : time;
+    public LocalDateTime getEndTime() {
+        return end != null ? end : time;
     }
     /**@return interval if the task is repeating and
-     * 0 if the task is not repeating*/
+     * 0 if the task is not ing*/
     public int getRepeatInterval() {
         return interval != 0 ? interval : 0;
     }
@@ -73,34 +92,53 @@ public class Task {
      * @param end is the end of execution,
      * @param interval is the period of running a repeating task to set
      * if the task is not repeated, then the task goes to the repeated one*/
-    public void setTime(final int start, final int end, final int interval) {
+    public void setTime(final LocalDateTime start, final LocalDateTime end, final int interval) {
+        if (start == null) {
+            throw new IllegalArgumentException("start is less than zero");
+        } else if (end == null) {
+            throw new IllegalArgumentException("end is less than zero");
+        } else if (interval <= 0){
+            throw new IllegalArgumentException("interval is less than or equal to zero");
+        } else if(start.isAfter(end)){
+            throw new IllegalArgumentException("start is greater than end");
+        }
         this.start = start;
         this.end = end;
         this.interval = interval;
-        this.time = 0;
+        this.time = null;
     }
     /**@return task is repeated or non-repeated*/
     public boolean isRepeated() {
         return interval != 0;
     }
+
+    @Override
+    public Task clone() throws CloneNotSupportedException {
+        return (Task) super.clone();
+    }
+
     /**@return the current closest time of the active task*/
-    public int nextTimeAfter(int current){
-        int nextInterval;
-        if(active){
-            if(time != 0 && current < time){
+    public LocalDateTime nextTimeAfter(LocalDateTime current) {
+        if (current == null) {
+            throw new IllegalArgumentException("current is null");
+        }
+        LocalDateTime nextDate;
+        if (active) {
+            if (time != null && current.isBefore(time)) {
                 return time;
             }
-            if(start != 0 && current < start) {
+            if (start != null && current.isBefore(start)) {
                 return start;
             }
-            if(start != 0 && current >= start){
-                nextInterval = (current - (current - start) % interval) + interval;
-                if (nextInterval < end) {
-                    return nextInterval;
+            if (start != null) {
+                nextDate = LocalDateTime.ofEpochSecond((current.toEpochSecond(ZoneOffset.UTC) - ((current.toEpochSecond(ZoneOffset.UTC)
+                                - start.toEpochSecond(ZoneOffset.UTC)) % interval)) + interval, current.getNano(), ZoneOffset.UTC);
+                if (!nextDate.isAfter(end)) {
+                    return nextDate;
                 }
             }
         }
-        return -1;
+        return null;
     }
 
     @Override
@@ -120,5 +158,3 @@ public class Task {
         return Objects.hash(getTitle(), getTime(), start, end, interval, isActive());
     }
 }
-
-
