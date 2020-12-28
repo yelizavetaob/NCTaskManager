@@ -2,7 +2,7 @@ package ua.edu.sumdu.j2se.obolonska.tasks;
 
 import java.util.stream.*;
 
-public abstract class AbstractTaskList implements Iterable<Task>{
+public abstract class AbstractTaskList implements Iterable<Task>, Serializable{
 
     public abstract void add(Task task);
 
