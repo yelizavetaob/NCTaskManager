@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 
-public class Task implements Cloneable{
+public class Task implements Cloneable, Serializable{
     /**Title is the title of a task*/
     private String title;
     /**Time is the time of a task that is executed 1 time (Fom 01.02.2000)*
