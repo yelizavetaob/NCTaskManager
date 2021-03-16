@@ -3,6 +3,7 @@ package ua.edu.sumdu.j2se.obolonska.tasks;
 import java.io.*;
 
 
+import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -19,6 +20,22 @@ public class Main {
         } catch (IOException e) { }
 
         int endOfProgram;
+
+
+        TaskTimer timer = new TaskTimer(true) {
+            @Override
+            public TimerTask TaskT(Task task) {
+                TimerTask timerTask = new TimerTask(){
+
+                    @Override
+                    public void run() {
+                        System.out.println(task.getTitle());
+                    }
+                };
+                return timerTask;
+            }
+        };
+
 
         //Запуск программы
         do {
